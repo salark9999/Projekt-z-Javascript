@@ -33,10 +33,7 @@ async function addDataFromServer() {
     
         response.data.forEach(element => {
         addNewElementToList(element.title + "/" + element.author, element.id);
-        editButton();
-        editInput();
-        removeButton();
-    })
+    });
 };
 
 function addNewElementToList(title, id) {  //obsługa dodawania elementów do listy
@@ -50,16 +47,51 @@ var newLi = document.createElement("li");
 newLi.id = id
 newLi.innerText = title;
 
+const editbutton = document.createElement("button");
+
+editbutton.id.add = "edit-button";
+editbutton.innerText = "Edit";
+editbutton.setAttribute("title", "To jest przycisk do edycji");
+editbutton.classList.add("data-edit--new");
+editbutton.style.setProperty("background-color", "green");
+
+const edit = document.getElementById("list");
+edit.appendChild(editbutton);
+
+const editInput = document.createElement("input");
+
+editInput.id.add = "edit-input";
+editInput.placeholder = "Title...";
+editInput.style.setProperty("background-color", "skyblue");
+
+const input = document.getElementById("list");
+input.appendChild(editInput);
+
+const delButton = document.createElement("button");
+
+delButton.id.add = "remove-button";
+delButton.innerText = "remove";
+delButton.setAttribute("title", "To jest przycisk do usuwania.");
+delButton.classList.add("data-remove--new");
+delButton.style.setProperty("background-color", "red");
+
+const del = document.getElementById("list");
+del.appendChild(delButton);
+
 return newLi;
 };
 
-
 function listClickManager(ev)  /*( event- event.target ) */{ //rozstrzygnięcie co dokładnie zostało kliknięte i wywołanie odpowiedniej funkcji
-    removeListElement(ev.target.id)
     
+    if (ev.target.className === "data-remove--new") {
+        axios.delete("http://195.181.210.249:3000/todo/" + ).then(() => {
+            $list.innerHTML = "";
+            addDataFromServer();
+        }); 
+    };
 };
 
-function removeListElement(id) { //usuwanie elementu
+/*function removeListElement(id) { //usuwanie elementu
     axios.delete("http://195.181.210.249:3000/todo/" + id).then(() => {
             $list.innerHTML = "";
             addDataFromServer();
@@ -67,53 +99,11 @@ function removeListElement(id) { //usuwanie elementu
     ); 
 };
 
-function editButton() {
-    const editButton = document.createElement("button");
-
-    editButton.id.add = "edit-button";
-    editButton.innerText = "Edit";
-    editButton.setAttribute("title", "To jest przycisk do edycji");
-    editButton.classList.add("data-edit--new");
-    editButton.style.setProperty( "background-color", "green");
-
-    const container = document.getElementById("list");
-    container.appendChild(editButton);
-
-};
-
-function editInput() {
-    const editInput = document.createElement("input");
-
-    editInput.id.add = "edit-input";
-    editInput.placeholder = "Title...";
-    editInput.style.setProperty( "background-color", "skyblue");
-
-    const container = document.getElementById("list");
-    container.appendChild(editInput);
-
-};
-
-
 function editListElement(id)  { // pobranie informacji na temat zadania// umieść dane w popupie
     axios.patch("http://195.181.210.249:3000/todo/" + id, {title: input.value}).then(() => {
             $list.innerHTML = "";
             addDataFromServer();
         }
     ); 
-};
-
-function removeButton() {
-    const revButton = document.createElement("button");
-
-    revButton.id.add = "remove-button";
-    revButton.innerText = "remove";
-    revButton.setAttribute("title", "To jest przycisk do usuwania.");
-    revButton.classList.add("data-remove--new");
-    revButton.style.setProperty( "background-color", "red");
-
-    const container = document.querySelector("#list");
-    container.appendChild(revButton);
-    
-};
-
+};*/
 document.addEventListener("DOMContentLoaded", main);
