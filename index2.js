@@ -47,63 +47,64 @@ var newLi = document.createElement("li");
 newLi.id = id
 newLi.innerText = title;
 
-const editbutton = document.createElement("button");
+var editbutton = document.createElement("button");
 
 editbutton.id.add = "edit-button";
 editbutton.innerText = "Edit";
 editbutton.setAttribute("title", "To jest przycisk do edycji");
-editbutton.classList.add("data-edit--new");
+editbutton.classList.add("edit");
 editbutton.style.setProperty("background-color", "green");
 
-const edit = document.getElementById("list");
+var edit = document.getElementById("list");
 edit.appendChild(editbutton);
 
-const editInput = document.createElement("input");
+var editInput = document.createElement("input");
 
-editInput.id.add = "edit-input";
+editInput.id.add = "edInput";
 editInput.placeholder = "Title...";
 editInput.style.setProperty("background-color", "skyblue");
 
-const input = document.getElementById("list");
+var input = document.getElementById("list");
 input.appendChild(editInput);
 
-const delButton = document.createElement("button");
+var delButton = document.createElement("button");
 
 delButton.id.add = "remove-button";
 delButton.innerText = "remove";
 delButton.setAttribute("title", "To jest przycisk do usuwania.");
-delButton.classList.add("data-remove--new");
+delButton.classList.add("delete");
 delButton.style.setProperty("background-color", "red");
 
-const del = document.getElementById("list");
+var del = document.getElementById("list");
 del.appendChild(delButton);
 
 return newLi;
+
 };
 
-function listClickManager(ev)  /*( event- event.target ) */{ //rozstrzygnięcie co dokładnie zostało kliknięte i wywołanie odpowiedniej funkcji
-    
-    if (ev.target.className === "data-remove--new") {
-        axios.delete("http://195.181.210.249:3000/todo/" + ).then(() => {
-            $list.innerHTML = "";
-            addDataFromServer();
-        }); 
+function listClickManager(event, id )/*( event- event.target ) */{ //rozstrzygnięcie co dokładnie zostało kliknięte i wywołanie odpowiedniej funkcji
+   if(event.target.className === "delete") {
+       removeElement(event.target.id);
+    } else if(event.target.className === "edit"){
+        editListElement(id);
     };
 };
 
-/*function removeListElement(id) { //usuwanie elementu
-    axios.delete("http://195.181.210.249:3000/todo/" + id).then(() => {
+function removeElement(id) { //usuwanie elementu
+    axios.delete("http://195.181.210.249:3000/todo/" + id)
+    .then(() => {
             $list.innerHTML = "";
             addDataFromServer();
         }
     ); 
 };
 
-function editListElement(id)  { // pobranie informacji na temat zadania// umieść dane w popupie
-    axios.patch("http://195.181.210.249:3000/todo/" + id, {title: input.value}).then(() => {
+function editListElement()  { // pobranie informacji na temat zadania// umieść dane w popupie
+    axios.patch("http://195.181.210.249:3000/todo/", {title: edInput.value})
+    .then(() => {
             $list.innerHTML = "";
             addDataFromServer();
         }
     ); 
-};*/
+};
 document.addEventListener("DOMContentLoaded", main);
