@@ -5,21 +5,37 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta description="Ta strona powstała na potrzebę zadania z javascript.">
         <meta keywords="javascript, html, css">
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style/reset.css">
+        <link rel="stylesheet" href="style/style.css">
+        <link rel="stylesheet" href="style/bootstrap.min.css">
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <title>My javascript page</title>
     </head>
     <body>
-        <script src="index2.js"></script>
-        <div id="addForm" class="header">
-            <h2 style="margin:5px">My To Do List</h2>
-            <input type="text" id="myInput" placeholder="Title...">
-            <span id="addTodo" class="addBtn">Add</span>
-        </div>
-
-        <ul id="list">
-         
-        </ul>
         
+        <script src="index2.js"></script>
+        
+        <div class="container">
+            <div id="addForm" class="header">
+                <h2 style="margin:5px">My To Do List</h2>
+                <input type="text" id="myInput" placeholder="Title...">
+                <span id="addTodo" class="addBtn">Add</span>
+            </div>
+        </div>
+    
+
+        <div id="list">
+         
+        </div>
+        <div class="form-popup" id="myForm">
+            <div class="form-group">
+                <textarea class="form-control" id="exampleFormControlTextarea2" rows="5"></textarea>
+            </div>
+            <div id="form-button-container">
+                <button type="button" class="btn btn-primary apply">Apply</button>
+                <button type="button" class="btn btn-danger cancel">Cancel</button>
+            </div>
+        </div>
+    
     </body>
 </html>

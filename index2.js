@@ -1,6 +1,17 @@
 var $addBtn;
 var $list;
 var $myInput;
+var todoDiv;
+var delButton;
+var editbutton;
+var removeToDoBtn;
+var editToDoBtn;
+var editToDoInput;
+var editInputValue;
+var currentTaskId;
+var cancelBtn;
+var submitButton;
+
 
 function main() {  //odpalenie funkcji początkowych
     prepareDOMElements();
@@ -13,12 +24,27 @@ function prepareDOMElements() {  //wyszukiwanie elementów w drzewie DOM
     $addBtn = document.getElementById("addTodo");
     $list = document.getElementById("list");
     $myInput = document.getElementById("myInput");
+    removeToDoBtn = document.querySelector('.delete');
+    editToDoBtn = document.querySelector('.edit');
+    editToDoInput = document.querySelector('#exampleFormControlTextarea2');
+    submitButton = document.querySelector('.apply');
+    cancelBtn = document.querySelector('.cancel');
 };
 
 function prepareDOMEvents() {   //nasłuchiwanie elementów / przygotowanie Listenerów
     $addBtn.addEventListener("click", addButtonClickHandler);
     $list.addEventListener("click", listClickManager);
+    submitButton.addEventListener('click', submitToDo);
+    cancelBtn.addEventListener('click', closeForm);
 };
+
+function listClickManager(ev)/*( event- event.target ) */{ //rozstrzygnięcie co dokładnie zostało kliknięte i wywołanie odpowiedniej funkcji
+    if(ev.target.classList.contains('delete')) {
+        removeElement(ev.target.parentElement.id);
+     } else if(ev.target.classList.contains('edit')){
+         editListElement(ev.target.parentElement.id);
+     };
+ };
 
 function addButtonClickHandler() {
     axios.post("http://195.181.210.249:3000/todo/", {title: $myInput.value})
@@ -43,68 +69,84 @@ function addNewElementToList(title, id) {  //obsługa dodawania elementów do li
 };
 
 function createElement(title, id){ /*( Title, author, id ) {  // Tworzy reprezentacje DOM elementu return newElement }*/
-var newLi = document.createElement("li");
-newLi.id = id
-newLi.innerText = title;
-
+var todoDiv = document.createElement("div");
+var newLi = document.createElement("div");
+var buttonsDiv = document.createElement("div");
 var editbutton = document.createElement("button");
+var delButton = document.createElement("button");
+
+todoDiv.id = id;
+todoDiv.classList.add("toDoDiv");
+todoDiv.setAttribute('title', 'It is a new request');
+
+newLi.classList.add = "newli";
+newLi.innerHTML = title;
+todoDiv.appendChild(newLi);
+
+buttonsDiv.id = id;
+buttonsDiv.classList.add = "buttons";;
+todoDiv.appendChild(buttonsDiv);
 
 editbutton.id.add = "edit-button";
 editbutton.innerText = "Edit";
 editbutton.setAttribute("title", "To jest przycisk do edycji");
-editbutton.classList.add("edit");
+editbutton.classList.add("buttons","edit");
 editbutton.style.setProperty("background-color", "green");
-
-var edit = document.getElementById("list");
-edit.appendChild(editbutton);
-
-var editInput = document.createElement("input");
-
-editInput.id.add = "edInput";
-editInput.placeholder = "Title...";
-editInput.style.setProperty("background-color", "skyblue");
-
-var input = document.getElementById("list");
-input.appendChild(editInput);
-
-var delButton = document.createElement("button");
+buttonsDiv.appendChild(editbutton);
 
 delButton.id.add = "remove-button";
-delButton.innerText = "remove";
+delButton.innerText = "Delete";
 delButton.setAttribute("title", "To jest przycisk do usuwania.");
-delButton.classList.add("delete");
+delButton.classList.add("buttons", "delete");
 delButton.style.setProperty("background-color", "red");
+buttonsDiv.appendChild(delButton);
 
-var del = document.getElementById("list");
-del.appendChild(delButton);
-
-return newLi;
+return todoDiv;
 
 };
 
-function listClickManager(event, id )/*( event- event.target ) */{ //rozstrzygnięcie co dokładnie zostało kliknięte i wywołanie odpowiedniej funkcji
-   if(event.target.className === "delete") {
-       removeElement(event.target.id);
-    } else if(event.target.className === "edit"){
-        editListElement(id);
-    };
+function editListElement(id, title)  { // pobranie informacji na temat zadania// umieszczenie danych w popupie
+    currentTaskId = id;
+    axios.get("http://195.181.210.249:3000/todo/" + id, title)
+    .then(function(response) {
+        console.log(response);
+        editToDoInput.value = response.data[0].title;
+        openForm();
+        }
+    ); 
 };
 
-function removeElement(id) { //usuwanie elementu
+function submitToDo() {
+    axios.put('http://195.181.210.249:3000/todo/' + currentTaskId, {
+        title: editToDoInput.value
+    }).then(
+        () => {
+            $list.innerHTML = ""; 
+            addDataFromServer();
+            closeForm();
+        }
+    )
+};
+
+function removeElement(id) {     // USUWANIE ELEMENTU
     axios.delete("http://195.181.210.249:3000/todo/" + id)
     .then(() => {
-            $list.innerHTML = "";
+            $list.innerHTML = ""; 
             addDataFromServer();
         }
     ); 
 };
 
-function editListElement()  { // pobranie informacji na temat zadania// umieść dane w popupie
-    axios.patch("http://195.181.210.249:3000/todo/", {title: edInput.value})
-    .then(() => {
-            $list.innerHTML = "";
-            addDataFromServer();
-        }
-    ); 
-};
-document.addEventListener("DOMContentLoaded", main);
+
+function openForm() {           // OTWIERANIE POPUP'u
+
+    document.getElementById('myForm').style.display = 'block';
+}
+
+
+function closeForm() {          // ZAMYKANIE POPUP'u
+
+    document.getElementById('myForm').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', main);
