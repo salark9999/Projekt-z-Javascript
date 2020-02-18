@@ -95,9 +95,10 @@ input {
 
 /* Style the "Add" button */
 .addBtn {
-  position: relative;
-  top: 32px;
-  padding: 34px 112px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
   width: 25%;
   background: #fa5609;
   color: rgb(100, 6, 80);

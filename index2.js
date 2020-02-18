@@ -70,13 +70,13 @@ function addButtonClickHandler() {
 async function addDataFromServer() {
     var response = await axios.get("http://195.181.210.249:3000/todo/");
     response.data.forEach(element => {
-        addNewElementToList(element.title + "/" + element.author, element.id, element.extra);
+        addNewElementToList("Tytuł: " + element.title + " --------- " + " Author: " + element.author, element.id, element.extra);
     });
 };
 
 function addNewElementToList(title, author, id, extra) {  //obsługa dodawania elementów do listy
     var newElement = createElement(title, author, id, extra);
-        $list.appendChild(newElement);
+    $list.appendChild(newElement);
 };
 
 function createElement(title, id, extra){ /*( Title, author, id ) {  // Tworzy reprezentacje DOM elementu return newElement }*/
@@ -92,6 +92,7 @@ function createElement(title, id, extra){ /*( Title, author, id ) {  // Tworzy r
     todoDiv.classList.add("toDoDiv");
     todoDiv.setAttribute("title", "It is a new request");
 
+    
     newLi.classList.add = "newli";
     newLi.innerHTML = title;
     todoDiv.appendChild(newLi);
@@ -159,9 +160,11 @@ function removeElement(id) {     // USUWANIE ELEMENTU
 function changeStatus(id, title) {  // ZMIANA STATUSU ELEMENTU NA 'DONE'
 
     document.getElementById(id).style.textDecoration = 'line-through';
+
     axios.put("http://195.181.210.249:3000/todo/" + id,title,{  
         extra: 'checked'
     }).then(() => {
+        
         $list.innerHTML = "";  
         addDataFromServer();
         }
