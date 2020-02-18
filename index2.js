@@ -1,18 +1,22 @@
 var $addBtn;
 var $list;
 var $myInput;
+var $myInputAuthor;
 var todoDiv;
 var delButton;
 var editbutton;
 var removeToDoBtn;
 var editToDoBtn;
 var editToDoInput;
+var editToDoInputAuthor;
 var editInputValue;
+var editInputValueAuthor;
 var currentTaskId;
 var cancelBtn;
 var submitButton;
 var statusButton;
 var statusBtn;
+var extra;
 
 
 function main() {  //odpalenie funkcji początkowych
@@ -27,9 +31,11 @@ function prepareDOMElements() {  //wyszukiwanie elementów w drzewie DOM
     $addBtn = document.getElementById("addTodo");
     $list = document.getElementById("list");
     $myInput = document.getElementById("myInput");
+    $myInputAuthor = document.getElementById("myInputAuthor");
     removeToDoBtn = document.querySelector(".delete");
     editToDoBtn = document.querySelector(".edit");
-    editToDoInput = document.querySelector("#exampleFormControlTextarea2");
+    editToDoInput = document.querySelector("#exampleFormControlTextarea1");
+    editToDoInputAuthor = document.querySelector("#exampleFormControlTextarea2");
     submitButton = document.querySelector(".apply");
     cancelBtn = document.querySelector(".cancel");
     statusBtn = document.querySelector(".status");
@@ -54,7 +60,7 @@ function listClickManager(ev)/*( event- event.target ) */{ //rozstrzygnięcie co
  };
 
 function addButtonClickHandler() {
-    axios.post("http://195.181.210.249:3000/todo/", {title: $myInput.value})
+    axios.post("http://195.181.210.249:3000/todo/", { title: $myInput.value , author: $myInputAuthor.value})
     .then (()=> {
         $list.innerHTML = "";
         addDataFromServer();
@@ -63,19 +69,17 @@ function addButtonClickHandler() {
 
 async function addDataFromServer() {
     var response = await axios.get("http://195.181.210.249:3000/todo/");
-    
-        response.data.forEach(element => {
-        addNewElementToList(element.title + "/" + element.author, element.id);
+    response.data.forEach(element => {
+        addNewElementToList(element.title + "/" + element.author, element.id, element.extra);
     });
 };
 
-function addNewElementToList(title, id) {  //obsługa dodawania elementów do listy
-    var newElement = createElement(title, id);
-
-    $list.appendChild(newElement);
+function addNewElementToList(title, author, id, extra) {  //obsługa dodawania elementów do listy
+    var newElement = createElement(title, author, id, extra);
+        $list.appendChild(newElement);
 };
 
-function createElement(title, id){ /*( Title, author, id ) {  // Tworzy reprezentacje DOM elementu return newElement }*/
+function createElement(title, id, extra){ /*( Title, author, id ) {  // Tworzy reprezentacje DOM elementu return newElement }*/
     var todoDiv = document.createElement("div");
     var newLi = document.createElement("div");
     var buttonsDiv = document.createElement("div");
@@ -83,6 +87,7 @@ function createElement(title, id){ /*( Title, author, id ) {  // Tworzy reprezen
     var delButton = document.createElement("button");
     var statusButton = document.createElement("button");
 
+    
     todoDiv.id = id;
     todoDiv.classList.add("toDoDiv");
     todoDiv.setAttribute("title", "It is a new request");
@@ -116,15 +121,15 @@ function createElement(title, id){ /*( Title, author, id ) {  // Tworzy reprezen
     buttonsDiv.appendChild(statusButton);
 
     return todoDiv;
-
 };
 
-function editListElement(id, title)  { // pobranie informacji na temat zadania// umieszczenie danych w popupie
+function editListElement(id, title, author)  { // pobranie informacji na temat zadania// umieszczenie danych w popupie
     currentTaskId = id;
-    axios.get("http://195.181.210.249:3000/todo/" + id, title)
+    axios.get("http://195.181.210.249:3000/todo/" + id, title, author)
     .then(function(response) {
         console.log(response);
         editToDoInput.value = response.data[0].title;
+        editToDoInputAuthor.value = response.data[0].author;
         openForm();
         }
     ); 
@@ -132,7 +137,8 @@ function editListElement(id, title)  { // pobranie informacji na temat zadania//
 
 function submitToDo() {
     axios.put("http://195.181.210.249:3000/todo/" + currentTaskId, {
-        title: editToDoInput.value
+        title: editToDoInput.value, 
+        author: editToDoInputAuthor.value, 
     }).then(() => {
             $list.innerHTML = ""; 
             addDataFromServer();
@@ -151,13 +157,13 @@ function removeElement(id) {     // USUWANIE ELEMENTU
 };
 
 function changeStatus(id, title) {  // ZMIANA STATUSU ELEMENTU NA 'DONE'
-   
+
     document.getElementById(id).style.textDecoration = 'line-through';
-    axios.post("http://195.181.210.249:3000/todo/" + id, title ,{  
-        title: newElement.value
-            }).then(() => {
-            $list.innerHTML = ""; 
-            addDataFromServer();
+    axios.put("http://195.181.210.249:3000/todo/" + id,title,{  
+        extra: 'checked'
+    }).then(() => {
+        $list.innerHTML = "";  
+        addDataFromServer();
         }
     )
 };

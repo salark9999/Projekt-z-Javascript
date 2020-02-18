@@ -1,2 +1,2 @@
 # Projekt-z-Javascript
-Projekt "Todo listy" z Javasript .
+Projekt z Javasript ,mający na celu pokazanie manipulacji funkcjami DOM.
